@@ -1,0 +1,1 @@
+'''Player class - Each game will be played by one player'''
