@@ -6,11 +6,12 @@ class Sqaure:
     def __init__(self,x =0,y=0,num=0):
         self.x = x # x coordinate
         self.y = y # y coordinate
-        self.num = num # number of adjecent mines
+        self.num = num # number of adjecent miness
+        self.chosen = False # attribute flag to see if sqaure has been chosen already
 
 
-    # def __repr__(self) -> str:
-    #     return '*'
+    def __repr__(self) -> str:
+        return '*'
 
 
 
@@ -20,6 +21,9 @@ class Mine(Sqaure):
     def __init__(self, x=0, y=0, num=0):
         super().__init__(x, y, num)
 
+
+    # def __repr__(self):
+    #     return '*'
 
 
 
