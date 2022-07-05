@@ -83,6 +83,37 @@ class Board(BaseBoard):
         a = np.array(self.board).reshape(self.width,self.height)
         print(a)
 
+    def choose_cell(self,row,col):
+        '''There are three possible actions that can occur here
+
+        1) Mine hit causing the game to end
+        2) Sqaure hit with atleast 1 neighbouring mine. meaning sqaure is shown to user
+        3) Sqaure with no neighbouring mines, is iteravily searched uptil sqaures with neighbouring mines
+        '''
+        if isinstance(self.board[row][col],Mine):
+            '''mine is hit'''
+            print("You have hit a mine.GAME OVER")
+            return
+
+        if self.board[row][col].num >0 and self.board[row][col].chosen!=True:
+            '''Triggerd if sqaure is greater than 0 and has not been chosen yet'''
+            self.board[row][col].chosen = True # Now Cannot chosen
+            return
+
+        if self.board[row][col].num ==0 and self.board[row][col].chosen!=True:
+            '''Triggered if sqaure has no neighbouring mines then iteravily searched uptil sqaures with neighbouring mines'''
+            print("Digging")
+            for r in range(max(0,row-1),min(self.height-1,(row+1)+1)): # increments through all sqaures in row
+                for c in range(max(0,col-1),min(self.width-1,(col+1)+1)):
+                    if self.board[r][c].chosen == True:
+                        '''Triggered when sqaure is already chosen and doesnt need to re dug'''
+                        continue
+
+                    self.choose_cell(r,c) # recursive use of function 
+
+
+        
+
 
     # def assign_numbers_to_sqaures(self):
     #     '''Iterating through'''
@@ -124,6 +155,7 @@ print("=======")
 #         else:
 #             print("Is a mine")
 
-
+print(b.board)
+print("==========")
 print(b.board)
 

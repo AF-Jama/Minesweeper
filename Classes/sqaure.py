@@ -2,7 +2,7 @@
 
 
 class Sqaure:
-    MINE = False # ALL SQAURES ARE ASSUMED TO BE NON MINES
+    # MINE = False # ALL SQAURES ARE ASSUMED TO BE NON MINES
     def __init__(self,x =0,y=0):
         self.x = x # x coordinate
         self.y = y # y coordinate
@@ -11,21 +11,27 @@ class Sqaure:
 
 
     def __repr__(self) -> str:
-        # # return str(self.num)
-        return str(self.num)
-        # return '*'
+        if self.chosen:    
+            '''If chosen show the number of neigbouring mines the sqaure has '''
+            return str(self.num)
+
+        return '*' # else just show a normal sqaure
 
 
 
 class Mine(Sqaure):
     '''A mine is a sqaure with just an added bomb'''
-    MINE = True
+    # MINE = True
     def __init__(self, x=0, y=0):
         super().__init__(x, y)
+        self.num = None
 
 
     def __repr__(self):
-        return 'x'
+        if self.chosen:
+            return 'x' # if chosen then show mine
+
+        return '*' # else show normal sqaure
 
 
 
