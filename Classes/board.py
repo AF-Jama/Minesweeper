@@ -32,7 +32,7 @@ class BaseBoard(ABC):
         for index,element in enumerate(self.board):
             if(not isinstance(element,Mine)):
                 '''When sqaure is not an instance of the Mine class we add a generic sqaure in that position'''
-                self.board[index] = self.sqaure
+                self.board[index] = Sqaure()
 
     def assign_numbers_to_sqaures(self):
         '''Iterating through'''
@@ -53,10 +53,8 @@ class BaseBoard(ABC):
                     # print("Same coordinate")
                     continue
                 if(isinstance(self.board[r][c],Mine)):
-                    num_of_bombs+=1 # increments number of bombs surronding sqaure
-                    
-
-        
+                    self.board[row][col].num +=1
+                    # num_of_bombs+=1 # increments number of bombs surronding sqaure
         return self.board
 
 
@@ -76,7 +74,7 @@ class Board(BaseBoard):
             if (isinstance(self.board[position],Mine)):
                 continue
 
-            self.board[position] = self.mine # adds mine into this 
+            self.board[position] = Mine() # adds mine into this 
             number_of_mines+=1
         return self.board # returns board with sqaures and mines
 
