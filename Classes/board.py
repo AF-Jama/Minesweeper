@@ -19,6 +19,8 @@ class BaseBoard(ABC):
         self.board = [0 for l in range(self.height) for w in range(self.width)] # creating board with length and width
         self.add_random_mines() # adds mines to board in random areas between 0 and 81
         self.add_sqaures() # adds sqaures in areas where there are no mines
+        self.board = np.array(self.board).reshape(self.width,self.height) # reshape flat array into numpy array
+        self.assign_numbers_to_sqaures()
         return self.board 
     
     @abstractmethod
@@ -32,6 +34,30 @@ class BaseBoard(ABC):
                 '''When sqaure is not an instance of the Mine class we add a generic sqaure in that position'''
                 self.board[index] = self.sqaure
 
+    def assign_numbers_to_sqaures(self):
+        '''Iterating through'''
+        for row in range(self.height):
+            for col in range(self.width):
+                if (isinstance(self.board[row][col],Mine)):
+                    '''If its a mine then we do nothing to it. We only want to calculate the surronding mines for an empty sqaure'''
+                    continue # carry on loop without doing anything here
+
+                self.calc_numbers_on_sqaures(row,col) # all sqaures are processed here 
+
+    def calc_numbers_on_sqaures(self,row,col):
+        num_of_bombs = 0 # counter for bombs
+        for r in range(max(0,row-1),min(self.height-1,(row+1)+1)): # increments through all sqaures in row
+            for c in range(max(0,col-1),min(self.width-1,(col+1)+1)):
+                if r==row and c == col:
+                    '''Triggered if row and column is same as the one being referenced'''
+                    # print("Same coordinate")
+                    continue
+                if(isinstance(self.board[r][c],Mine)):
+                    num_of_bombs+=1 # increments number of bombs surronding sqaure
+                    
+
+        
+        return self.board
 
 
 class Board(BaseBoard):
@@ -44,10 +70,14 @@ class Board(BaseBoard):
         
     def add_random_mines(self):
         '''Adding mines in random positions'''
-        for i in range(Board.MINES):
-            position = abs(randint(1000,2000) %(self.width*self.height)-1-i) # gets random position between index 0 and (self.width*self.length)-1
-            self.board[position] = self.mine # adds mine into this 
+        number_of_mines = 0
+        while number_of_mines< Board.MINES:
+            position = abs(randint(1000,2000) %(self.width*self.height)-1-number_of_mines) # gets random position between index 0 and (self.width*self.length)-1
+            if (isinstance(self.board[position],Mine)):
+                continue
 
+            self.board[position] = self.mine # adds mine into this 
+            number_of_mines+=1
         return self.board # returns board with sqaures and mines
 
 
@@ -56,10 +86,46 @@ class Board(BaseBoard):
         print(a)
 
 
+    # def assign_numbers_to_sqaures(self):
+    #     '''Iterating through'''
+    #     for row in self.board:
+    #         for col in row:
+    #             if (isinstance(self.board[row][col],Mine)):
+    #                 '''If its a mine then we do nothing to it. We only want to calculate the surronding mines for an empty sqaure'''
+    #                 continue # carry on loop without doing anything here
+
+    #             self.calc_numbers_on_sqaures(row,col) # all sqaures are processed here 
+
+    # def calc_numbers_on_sqaures(self,row,col):
+    #     num_of_bombs = 0 # counter for bombs
+    #     for r in range(row-1, (row+1)+1): # increments through all sqaures in row
+    #         for c in range(col-1,(col+1)+1):
+    #             if(isinstance(self.board[r][c],Mine)):
+    #                 num_of_bombs+=1 # increments number of surronding bombs
+
+    #     self.board[row][col].num = num_of_bombs # assigns number of surronding bombs
+
+
+
+
+
+
+
 
 
 
 b = Board()
 print("=======")
-b.show_board()
+# b.show_board()
+
+# for row in b.board:
+#     for col in row:
+#         if(isinstance(col,Mine)):
+#             print("Is a sqaure")
+
+#         else:
+#             print("Is a mine")
+
+
+print(b.board)
 

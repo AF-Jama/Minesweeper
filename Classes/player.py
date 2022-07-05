@@ -14,6 +14,7 @@ class Player:
 
 
         if (isinstance(self.board.board[(col*row)-1],Mine)):
+            '''If mine is choose game is over'''
             print("Game Over, You hit a mine")
             return
 
