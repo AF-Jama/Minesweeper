@@ -1,0 +1,7 @@
+1) Create board with random mines
+2) Ask user for coordinates to a sqaure
+3) Check the type of sqaure of chosen
+        a) If Mine, end game and show solved board and prompt new game
+        b) If sqaure with atleast one neigbouring mine then reveal and show current new board
+        c) If Sqaure with no neigbouring mines then dig around iteratively until sqaures with atleast one mine
+        d) Repeat from top until mine is hit or all safe sqaures have been chosen

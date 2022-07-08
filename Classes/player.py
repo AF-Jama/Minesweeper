@@ -1,10 +1,11 @@
 '''Player class - Each game will be played by one player'''
-from board import Board
-from sqaure import Sqaure,Mine
+from Classes.board import Board
+from Classes.sqaure import Sqaure,Mine
 
 class Player:
-    def __init__(self):
+    def __init__(self,name):
         self.board = Board() # player has a board
+        self.name = name
 
     def choose_cell(self,col,row):
         '''Allow player to choose cell to click'''

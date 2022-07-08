@@ -2,7 +2,7 @@
 from abc import ABC,abstractmethod
 from random import randint
 import numpy as np
-from sqaure import Sqaure,Mine
+from Classes.sqaure import Sqaure,Mine
 
 # Base board which represents a 
 class BaseBoard(ABC):
@@ -10,8 +10,8 @@ class BaseBoard(ABC):
         super().__init__()
         self.width = width
         self.height = height
-        self.sqaure = Sqaure() # compisition as board has sqaures
-        self.mine = Mine() # compisition as board has mine
+        # self.sqaure = Sqaure() # compisition as board has sqaures
+        # self.mine = Mine() # compisition as board has mine
         self.board = []
 
     def createStructure(self):
@@ -79,83 +79,116 @@ class Board(BaseBoard):
         return self.board # returns board with sqaures and mines
 
 
-    def show_board(self):
-        a = np.array(self.board).reshape(self.width,self.height)
-        print(a)
-
     def choose_cell(self,row,col):
         '''There are three possible actions that can occur here
 
         1) Mine hit causing the game to end
         2) Sqaure hit with atleast 1 neighbouring mine. meaning sqaure is shown to user
-        3) Sqaure with no neighbouring mines, is iteravily searched uptil sqaures with neighbouring mines
+        3) Sqaure with no neighbouring mines, is recursively searched up till sqaures with neighbouring mines
         '''
+
         if isinstance(self.board[row][col],Mine):
-            '''mine is hit'''
-            print("You have hit a mine.GAME OVER")
-            return
+            return False
 
-        if self.board[row][col].num >0 and self.board[row][col].chosen!=True:
-            '''Triggerd if sqaure is greater than 0 and has not been chosen yet'''
-            self.board[row][col].chosen = True # Now Cannot chosen
-            return
+        if self.board[row][col].num>0 and self.board[row][col].chosen!=True:
+            self.board[row][col].chosen = True # Now Cannot chosen on further picks
+            return True
 
-        if self.board[row][col].num ==0 and self.board[row][col].chosen!=True:
+        if self.board[row][col].num== 0 and self.board[row][col].chosen!=True:
             '''Triggered if sqaure has no neighbouring mines then iteravily searched uptil sqaures with neighbouring mines'''
-            print("Digging")
-            for r in range(max(0,row-1),min(self.height-1,(row+1)+1)): # increments through all sqaures in row
+            self.board[row][col].chosen = True
+            for r in range(max(0,row-1),min(self.height-1,(row+1)+1)): # increments through all sqaures in row -> 0- 2 col ->0->2
                 for c in range(max(0,col-1),min(self.width-1,(col+1)+1)):
-                    if self.board[r][c].chosen == True:
+                    if self.board[r][c].chosen == True and isinstance(self.board[r][c],Sqaure):
                         '''Triggered when sqaure is already chosen and doesnt need to re dug'''
                         continue
 
-                    self.choose_cell(r,c) # recursive use of function 
+                    self.choose_cell(r,c) # recursive use of function
 
+            return True
+
+
+    def check_all_sqaures(self):
+        '''Checks if all sqaures have been attribute value true'''
+        for row in range(self.height):
+            for col in range(self.width):
+                if isinstance(self.board[row][col],Sqaure) and self.board[row][col].chosen == True:
+                    continue
+
+                elif isinstance(self.board[row][col],Mine):
+                    pass
+
+                else:
+                    break
+
+            return False
+
+        return True
+
+
+    def show_current_board(self):
+        return self.board
+
+
+    def check_bounds(self,row,col)->bool:
+        '''Check bounds of cell choosen'''
+        if col<0 or row<0 or col>self.width-1 or row>self.height-1 or self.board[row][col].chosen == True:
+            return True
+
+        return False 
+    
+    @property
+    def show_solved_board(self):
+        '''Show full solved beard'''
+        for r in range(self.width):
+            for c in range(self.height):
+                if isinstance(self.board[r][c],Mine):
+                    self.board[r][c].chosen = True
+
+                if (isinstance(self.board[r][c],Sqaure)):
+                    self.board[r][c].chosen = True
+
+        return self.board # returns solved board
+
+
+    
+    def run(self):
+        while not self.check_all_sqaures():
+            print(self.show_current_board())
+            coordinate = input("Enter coordinate ie:(x,y):")
+            # print(coordinate)
+            x,y = coordinate.split(',')
+            x = int(x)
+            y = int(y)
+            if(self.check_bounds(x,y)):
+                print("Invalid Coordinate or sqaure has already been chosen")
+                continue
+
+            success = self.choose_cell(x,y)
+            if success:
+                continue
+
+            else:
+                print("HIT A MINE")
+                break
+
+        
+        if success:
+            print("YOU WON!!")
+
+        else:
+            print("Solved Board:")
+            print(self.show_solved_board)
 
         
 
 
-    # def assign_numbers_to_sqaures(self):
-    #     '''Iterating through'''
-    #     for row in self.board:
-    #         for col in row:
-    #             if (isinstance(self.board[row][col],Mine)):
-    #                 '''If its a mine then we do nothing to it. We only want to calculate the surronding mines for an empty sqaure'''
-    #                 continue # carry on loop without doing anything here
 
-    #             self.calc_numbers_on_sqaures(row,col) # all sqaures are processed here 
-
-    # def calc_numbers_on_sqaures(self,row,col):
-    #     num_of_bombs = 0 # counter for bombs
-    #     for r in range(row-1, (row+1)+1): # increments through all sqaures in row
-    #         for c in range(col-1,(col+1)+1):
-    #             if(isinstance(self.board[r][c],Mine)):
-    #                 num_of_bombs+=1 # increments number of surronding bombs
-
-    #     self.board[row][col].num = num_of_bombs # assigns number of surronding bombs
+    def __repr__(self) -> str:
+        a = np.array(self.board).reshape(self.width,self.height)
+        return str(a)
 
 
-
-
-
-
-
-
-
-
-b = Board()
-print("=======")
-# b.show_board()
-
-# for row in b.board:
-#     for col in row:
-#         if(isinstance(col,Mine)):
-#             print("Is a sqaure")
-
-#         else:
-#             print("Is a mine")
-
-print(b.board)
-print("==========")
-print(b.board)
-
+if __name__ == "__main__":
+    b = Board()
+    b.run()
